@@ -110,14 +110,3 @@ All data is stored in your browser's localStorage — nothing is sent to any ser
 
 MIT
 
-## Pitch (40 words each)
-
-**The Problem:** OMFS trainees lack accessible, case-based self-study tools. Textbooks are dense, commercial apps are expensive, and most don't generate personalised cases or track weak areas. There's a gap between clinical knowledge and self-directed practice.
-
-**Your Solution:** OMFS Case Tutor — a free, browser-based PWA that generates fictional clinical cases from any pasted text. Includes spaced-repetition drug flashcards, procedure logs, progress tracking, embedded YouTube videos, and AI-generated illustrations. Zero cost, zero setup.
-
-**How You Built It:** Single-page vanilla JS app with no build step. Uses five free AI providers (Pollinations keyless by default). SM-2 spaced repetition, hand-drawn SVG progress charts, curated YouTube video database, Pollinations image API. PWA with offline caching.
-
-**Who Benefits:** OMFS trainees worldwide — especially in resource-limited settings who can't afford premium subscriptions. Any dental student, junior doctor, or surgical trainee preparing for exams or wanting structured self-study without financial barriers.
-
-**Future Vision:** Add collaborative case sharing, CBCT viewer integration, voice-to-text case input, gamification with study streaks, and partnerships with OMFS training programmes. Scale the platform to other surgical specialties beyond oral and maxillofacial surgery.
