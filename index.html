@@ -145,17 +145,20 @@
     <label class="field">
       <span>AI Provider</span>
       <select id="providerSelect">
-        <option value="gemini">Google Gemini (free, no card)</option>
-        <option value="groq">Groq (free, very fast)</option>
-        <option value="openrouter">OpenRouter (20+ free models)</option>
+        <option value="pollinations">Pollinations (free, no key needed)</option>
+        <option value="gemini">Google Gemini (free, needs key)</option>
+        <option value="groq">Groq (free, needs key)</option>
+        <option value="openrouter">OpenRouter (20+ free models, needs key)</option>
         <option value="anthropic">Anthropic (paid)</option>
       </select>
     </label>
-    <label class="field">
-      <span>API key</span>
-      <input type="password" id="apiKeyInput" placeholder="Paste your key here">
-    </label>
-    <p class="hint" id="providerHelp">Get a free key at aistudio.google.com — no credit card needed.</p>
+    <div id="apiKeyField">
+      <label class="field">
+        <span>API key</span>
+        <input type="password" id="apiKeyInput" placeholder="Paste your key here">
+      </label>
+      <p class="hint" id="providerHelp">No API key needed. Free, anonymous, no signup. Rate-limited to ~1 request per 15 seconds.</p>
+    </div>
     <label class="field">
       <span>Model</span>
       <select id="modelSelect"></select>

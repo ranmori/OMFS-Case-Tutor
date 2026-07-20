@@ -8,7 +8,7 @@
 const STORAGE_KEY = 'omfsCaseTutorData_v1';
 
 const DEFAULT_DATA = {
-  settings: { provider: 'gemini', apiKey: '', model: '', voiceURI: '' },
+  settings: { provider: 'pollinations', apiKey: '', model: '', voiceURI: '' },
   cases: [],        // {id, createdAt, topic, stem, promptQuestions[], diagnosis, imaging, management, revealed, quality}
   drugCards: [],     // {id, name, trigger, info, topic, sourceCaseId, sm2:{repetition,interval,efactor,nextReview,lastReview}, history:[{date,quality}]}
   procedureLog: [],  // {id, date, procedure, notes, topic, sourceCaseId}
@@ -105,6 +105,17 @@ function weakestTopics(limit=3){
    AI provider abstraction — supports Gemini, Groq, OpenRouter, Anthropic
    ============================================================ */
 const PROVIDERS = {
+  pollinations: {
+    name: 'Pollinations (free, no key)',
+    keyless: true,
+    models: [
+      { id: 'openai', label: 'OpenAI (default)' },
+      { id: 'mistral', label: 'Mistral' },
+      { id: 'openai-fast', label: 'GPT-OSS (fast)' }
+    ],
+    help: 'No API key needed. Free, anonymous, no signup. Rate-limited to ~1 request per 15 seconds.',
+    url: 'pollinations'
+  },
   gemini: {
     name: 'Google Gemini (free)',
     models: [
@@ -160,16 +171,31 @@ async function callAI(system, userPrompt){
   const apiKey = DATA.settings.apiKey;
   const model = getModel();
 
-  if(!apiKey){
-    throw new Error(`No API key set. Open Settings and add your ${getProvider().name} key.`);
+  const prov = getProvider();
+  if(!prov.keyless && !apiKey){
+    throw new Error(`No API key set. Open Settings and add your ${prov.name} key.`);
   }
 
-  if(provider === 'gemini'){
+  if(provider === 'pollinations'){
+    return await callPollinations(system, userPrompt, model);
+  } else if(provider === 'gemini'){
     return await callGemini(system, userPrompt, apiKey, model);
   } else {
-    // Groq, OpenRouter, Anthropic all use similar message formats
     return await callOpenAICompatible(system, userPrompt, apiKey, model, provider);
   }
+}
+
+async function callPollinations(system, userPrompt, model){
+  const fullPrompt = system + '\n\n' + userPrompt;
+  const encoded = encodeURIComponent(fullPrompt);
+  const url = `https://text.pollinations.ai/${encoded}?model=${model}&json=true&temperature=0.7`;
+  const res = await fetch(url);
+  if(!res.ok){
+    const text = await res.text().catch(()=> '');
+    throw new Error(`Pollinations API error ${res.status}: ${text.slice(0,300)}`);
+  }
+  const raw = await res.text();
+  return parseModelJSON(raw);
 }
 
 async function callGemini(system, userPrompt, apiKey, model){
@@ -698,10 +724,11 @@ function switchTab(name){
    Settings
    ============================================================ */
 function openSettings(){
-  document.getElementById('providerSelect').value = DATA.settings.provider || 'gemini';
+  document.getElementById('providerSelect').value = DATA.settings.provider || 'pollinations';
   updateModelOptions();
-  document.getElementById('apiKeyInput').value = DATA.settings.apiKey || '';
   updateProviderHelp();
+  document.getElementById('apiKeyInput').value = DATA.settings.apiKey || '';
+  updateKeyFieldVisibility();
   populateVoices();
   document.getElementById('settingsBackdrop').hidden = false;
 }
@@ -725,6 +752,16 @@ function updateProviderHelp(){
   const provider = document.getElementById('providerSelect').value;
   const p = PROVIDERS[provider];
   document.getElementById('providerHelp').textContent = p.help;
+}
+function updateKeyFieldVisibility(){
+  const provider = document.getElementById('providerSelect').value;
+  const p = PROVIDERS[provider];
+  const field = document.getElementById('apiKeyField');
+  if(p.keyless){
+    field.style.display = 'none';
+  } else {
+    field.style.display = '';
+  }
 }
 function populateVoices(){
   const sel = document.getElementById('voiceSelect');
@@ -765,11 +802,12 @@ document.getElementById('resetDataBtn').addEventListener('click', resetAllData);
 document.getElementById('providerSelect').addEventListener('change', ()=>{
   updateModelOptions();
   updateProviderHelp();
+  updateKeyFieldVisibility();
 });
 
-// first-run: nudge toward settings if no key yet
-if(!DATA.settings.apiKey){
-  setTimeout(()=> toast('Open Settings to add a free API key (Gemini, Groq, or OpenRouter).', 5000), 600);
+// first-run: brief welcome
+if(!DATA.settings.apiKey && DATA.settings.provider !== 'pollinations'){
+  setTimeout(()=> toast('Using Pollinations (free, no key). Change provider in Settings if needed.', 5000), 600);
 }
 refreshBadges();
 
