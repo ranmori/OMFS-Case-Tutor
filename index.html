@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OMFS Case Tutor</title>
+<meta name="description" content="Case-based OMFS training tool with spaced-repetition drug reference, procedure log, and free AI providers.">
+<meta name="theme-color" content="#12151A">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="binder-strip" aria-hidden="true">
+  <span></span><span></span><span></span>
+</div>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">Rx</span>
+      <div class="brand-text">
+        <h1>OMFS Case Tutor</h1>
+        <p class="brand-sub">chart-based self-study &mdash; fictional cases only</p>
+      </div>
+    </div>
+    <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Open settings">&#9881;</button>
+  </div>
+
+  <nav class="chart-tabs" role="tablist" aria-label="Sections">
+    <button class="tab tab-case active" data-tab="case" role="tab" aria-selected="true">Case</button>
+    <button class="tab tab-drugs" data-tab="drugs" role="tab" aria-selected="false">Drug Reference<span class="badge" id="drugsDueBadge" hidden>0</span></button>
+    <button class="tab tab-procs" data-tab="procs" role="tab" aria-selected="false">Procedure Log</button>
+    <button class="tab tab-progress" data-tab="progress" role="tab" aria-selected="false">Progress</button>
+  </nav>
+</header>
+
+<main class="app-main">
+
+  <!-- CASE TAB -->
+  <section class="panel" id="panel-case" data-panel="case">
+
+    <div class="paper-card" id="sourceCard">
+      <div class="paper-card-label">Source material</div>
+      <textarea id="sourceInput" placeholder="Paste a textbook passage, guideline excerpt, or lecture note here. The tutor will build a fictional case from it."></textarea>
+      <div class="row-between">
+        <label class="topic-hint">Optional focus topic <input type="text" id="focusTopic" placeholder="leave blank to let weak-point targeting decide"></label>
+        <button id="generateBtn" class="btn btn-primary">Generate case</button>
+      </div>
+      <p class="hint" id="weakPointHint" hidden></p>
+    </div>
+
+    <div class="paper-card" id="caseCard" hidden>
+      <div class="paper-card-label" id="caseTopicLabel">Case</div>
+      <div class="stem" id="caseStem"></div>
+
+      <div class="case-image" id="caseImage" hidden></div>
+
+      <div class="prompt-questions" id="promptQuestions"></div>
+
+      <div class="reveal-zone">
+        <button id="revealBtn" class="btn btn-outline">Reveal diagnosis &amp; management</button>
+        <button id="speakBtn" class="btn btn-ghost" hidden>&#128266; Attending reads aloud</button>
+      </div>
+
+      <div class="answer-block" id="answerBlock" hidden>
+        <div class="stamp" id="stamp">REVIEWED</div>
+        <div class="answer-image" id="answerImage" hidden></div>
+        <div class="answer-section"><h3>Diagnosis</h3><p id="ansDiagnosis"></p></div>
+        <div class="answer-section"><h3>Imaging</h3><p id="ansImaging"></p></div>
+        <div class="answer-section"><h3>Management</h3><p id="ansManagement"></p></div>
+
+        <div class="answer-videos" id="answerVideos" hidden></div>
+
+        <div class="self-rate">
+          <p>How well did you recall this before revealing?</p>
+          <div class="rate-scale" id="rateScale">
+            <button data-q="0">0<span>blackout</span></button>
+            <button data-q="1">1<span>barely</span></button>
+            <button data-q="2">2<span>struggled</span></button>
+            <button data-q="3">3<span>hesitant</span></button>
+            <button data-q="4">4<span>good</span></button>
+            <button data-q="5">5<span>perfect</span></button>
+          </div>
+        </div>
+
+        <div class="logged-note" id="loggedNote" hidden></div>
+      </div>
+    </div>
+
+    <div class="empty-state" id="caseEmpty">
+      <p>No case yet. Paste source material above and generate one to begin.</p>
+    </div>
+  </section>
+
+  <!-- DRUG REFERENCE TAB -->
+  <section class="panel" id="panel-drugs" data-panel="drugs" hidden>
+    <div class="panel-head">
+      <h2>Drug reference</h2>
+      <p class="panel-sub">Auto-built from your cases. Entries resurface here on an SM-2 spaced-repetition schedule.</p>
+    </div>
+    <div id="drugsDue"></div>
+    <div class="panel-subhead" id="drugsAllHead" hidden>All entries</div>
+    <div id="drugsAll" class="drug-grid"></div>
+    <div class="empty-state" id="drugsEmpty">
+      <p>No drug entries yet &mdash; they're created automatically when a generated case touches pharmacology.</p>
+    </div>
+  </section>
+
+  <!-- PROCEDURE LOG TAB -->
+  <section class="panel" id="panel-procs" data-panel="procs" hidden>
+    <div class="panel-head">
+      <h2>Procedure log</h2>
+      <p class="panel-sub">Every case that touches a surgical procedure gets an entry here, most recent first.</p>
+    </div>
+    <table class="log-table" id="procTable" hidden>
+      <thead><tr><th>Date</th><th>Procedure</th><th>Topic</th><th>Notes</th></tr></thead>
+      <tbody id="procTableBody"></tbody>
+    </table>
+    <div class="empty-state" id="procsEmpty">
+      <p>No procedures logged yet.</p>
+    </div>
+  </section>
+
+  <!-- PROGRESS TAB -->
+  <section class="panel" id="panel-progress" data-panel="progress" hidden>
+    <div class="panel-head">
+      <h2>You're improving</h2>
+      <p class="panel-sub">Self-rated recall over time, per topic. New cases are biased toward whatever sits lowest here.</p>
+    </div>
+    <div id="progressCharts"></div>
+    <div class="empty-state" id="progressEmpty">
+      <p>No ratings yet &mdash; complete a case or drug review to start a chart.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsBackdrop" hidden>
+  <div class="modal paper-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="paper-card-label" id="settingsTitle">Settings</div>
+    <label class="field">
+      <span>AI Provider</span>
+      <select id="providerSelect">
+        <option value="gemini">Google Gemini (free, no card)</option>
+        <option value="groq">Groq (free, very fast)</option>
+        <option value="openrouter">OpenRouter (20+ free models)</option>
+        <option value="anthropic">Anthropic (paid)</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>API key</span>
+      <input type="password" id="apiKeyInput" placeholder="Paste your key here">
+    </label>
+    <p class="hint" id="providerHelp">Get a free key at aistudio.google.com — no credit card needed.</p>
+    <label class="field">
+      <span>Model</span>
+      <select id="modelSelect"></select>
+    </label>
+    <label class="field">
+      <span>Attending voice</span>
+      <select id="voiceSelect"></select>
+    </label>
+    <div class="row-between">
+      <button id="resetDataBtn" class="btn btn-ghost btn-danger">Erase all local data</button>
+      <button id="closeSettingsBtn" class="btn btn-primary">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
