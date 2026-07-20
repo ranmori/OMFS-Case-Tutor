@@ -254,34 +254,64 @@ async function callOpenAICompatible(system, userPrompt, apiKey, model, provider)
    Maps procedure keywords to known YouTube teaching videos
    ============================================================ */
 const VIDEO_DB = [
-  // Mandible fractures
-  { keywords: ['mandible fracture','mandibular fracture','angle fracture','symphysis fracture','parasymphysis fracture','condylar fracture','ramus fracture'], videoId: 'R3PbpzI40Kw', title: 'Mandible fracture ORIF — surgical technique' },
+  // ── Mandible fractures ──
+  { keywords: ['mandible fracture','mandibular fracture','angle fracture','symphysis fracture','parasymphysis fracture','ramus fracture'], videoId: 'RcxMK7Qo5Gw', title: 'Jaw fracture surgical treatment — MMF & ORIF animation' },
   { keywords: ['mandible fracture','jaw fracture','open reduction internal fixation'], videoId: 'kQsDZ3ZA5sA', title: 'Mandibular angle fractures — clinical overview' },
-  // Orthognathic surgery
-  { keywords: ['le fort','orthognathic','bimaxillary','bssO','ramus osteotomy','maxillary osteotomy','mandibular osteotomy','jaw surgery','corrective jaw'], videoId: 'fw2brzBw3Q0', title: 'Orthognathic surgery — animated overview' },
-  // Third molar / wisdom teeth
+  { keywords: ['condylar fracture','condyle fracture','subcondylar fracture'], videoId: 'mreRemFr6NQ', title: 'Condylar fracture — transparotid ORIF technique' },
+  // ── Orthognathic surgery ──
+  { keywords: ['le fort','orthognathic','bimaxillary','bssro','ramus osteotomy','maxillary osteotomy','mandibular osteotomy','jaw surgery','corrective jaw','bimax'], videoId: 'snKNM1Fxbys', title: 'Le Fort I / II / III osteotomies & bimax surgery explained' },
+  { keywords: ['bilateral sagittal split osteotomy','bsso','sagittal split'], videoId: 'UohHN5Ig644', title: 'Sagittal split osteotomy — surgical technique' },
+  { keywords: ['genioplasty','chin osteotomy','horizontal sliding genioplasty'], videoId: 'snKNM1Fxbys', title: 'Genioplasty — chin repositioning overview' },
+  // ── Third molar / wisdom teeth ──
   { keywords: ['third molar','wisdom tooth','wisdom teeth','impacted tooth','molar extraction'], videoId: 'E1t19b_AqWU', title: 'Impacted third molar extraction — surgical technique' },
   { keywords: ['third molar','wisdom tooth','extraction'], videoId: 'DyalZY0msxs', title: 'Full wisdom teeth removal procedure' },
-  // TMJ
+  // ── TMJ ──
   { keywords: ['tmj','temporomandibular','temporomandibular joint','arthrocentesis','arthroscopy','internal derangement','disc displacement'], videoId: 'YzOI_Ldi_Uw', title: 'TMJ internal derangement — arthrocentesis, arthroscopy, condylectomy' },
   { keywords: ['tmj','temporomandibular','ankylosis'], videoId: 'Jm4Qhey4Iq0', title: "Kaban's protocol — TMJ ankylosis management" },
-  // Dental implants
-  { keywords: ['dental implant','implant placement','implant surgery','implant placement'], videoId: 'PeAUQweKCHg', title: 'Digital guided implant surgery — step by step' },
+  { keywords: ['tmj surgery','tmj total joint replacement','total joint prosthesis','gap arthroplasty','disc plication'], videoId: 'n1K_nH7WLxo', title: 'TMJ surgery types — arthrocentesis to open-joint surgery' },
+  { keywords: ['disc displacement','disc repositioning','tmj disc'], videoId: 'mB468Jh9aAY', title: 'TMJ disc displacement — anatomy & pathophysiology animation' },
+  // ── Dental implants ──
+  { keywords: ['dental implant','implant placement','implant surgery'], videoId: 'PeAUQweKCHg', title: 'Digital guided implant surgery — step by step' },
   { keywords: ['implant','immediate implant'], videoId: 'k6Loublqo50', title: 'Immediate implant placement — microsurgery technique' },
-  // Zygomatic fractures
-  { keywords: ['zygoma','zygomatic','malar','tripod fracture','zygomatic arch'], videoId: 'R3PbpzI40Kw', title: 'Facial fracture management — ORIF technique' },
-  // Neck dissection / pathology
-  { keywords: ['neck dissection','lymph node','salivary gland','parotid','submandibular gland','tumour resection','tumor resection','cyst enucleation'], videoId: 'Jm4Qhey4Iq0', title: 'Head & neck surgical principles' },
-  // Dentoalveolar
-  { keywords: ['dentoalveolar','alveolar fracture','tooth avulsion','avulsed tooth','alveolar bone graft'], videoId: 'fw2brzBw3Q0', title: 'Alveolar bone grafting — overview' },
-  // Reconstructive
-  { keywords: ['free flap','microvascular','fibula flap','reconstruction','bone graft','distraction osteogenesis'], videoId: 'fw2brzBw3Q0', title: 'Reconstructive surgery principles' },
-  // General trauma
-  { keywords: ['facial trauma','panfacial fracture','orbital fracture','floor of orbit','blowout fracture','naso-orbito-ethmoid','noe fracture'], videoId: 'R3PbpzI40Kw', title: 'Facial fracture fixation — principles' },
-  // Local anaesthesia
+  { keywords: ['sinus lift','sinus augmentation','sinus floor elevation','crestal sinus lift','lateral window sinus'], videoId: 'EyUYMrJLHOM', title: 'Dental implant with sinus lift — under 30 minutes' },
+  { keywords: ['all-on-4','full arch implant','all on four','full mouth implant','hybrid prosthesis'], videoId: 'uDmwvJwY4nA', title: 'All-on-4 digital workflow — immediate full-arch restoration' },
+  { keywords: ['transcrestal sinus','osteotome sinus','indirect sinus'], videoId: 'sqWr1ZNKnJw', title: 'Transcrestal sinus lift — implant placement animation' },
+  { keywords: ['socket preservation','ridge preservation','socket graft','alveolar ridge preservation'], videoId: 'yyjMe8etu3Y', title: 'Socket preservation — ridge management techniques' },
+  { keywords: ['ridge augmentation','bone augmentation','guided bone regeneration','gbr'], videoId: 'V1oEmrFAWOQ', title: 'Hard & soft tissue ridge augmentation — membrane techniques' },
+  // ── Zygomatic fractures ──
+  { keywords: ['zygoma','zygomatic','malar','tripod fracture','zygomatic arch'], videoId: 'RcxMK7Qo5Gw', title: 'Facial fracture management — ORIF technique' },
+  // ── Orbital / midface fractures ──
+  { keywords: ['orbital fracture','floor of orbit','blowout fracture','orbital blowout','enophthalmos'], videoId: 'rNbfwCJXvNk', title: 'Orbital blowout fracture repair — mesh reconstruction' },
+  { keywords: ['orbital approach','surgical approaches orbit','lateral orbitotomy','transconjunctival approach'], videoId: '6fa1oEDiCEQ', title: 'Surgical approaches to the orbit — comprehensive guide' },
+  { keywords: ['naso-orbito-ethmoid','noe fracture','nasal fracture','nasoethmoid'], videoId: 'RcxMK7Qo5Gw', title: 'Facial trauma principles — NOE & nasal fractures' },
+  { keywords: ['frontal sinus fracture','frontal sinus','anterior table fracture'], videoId: 't0pRDAUoSTw', title: 'Frontal sinus fracture — case study & management' },
+  // ── Neck dissection / salivary / pathology ──
+  { keywords: ['neck dissection','radical neck','modified radical neck','selective neck dissection','lymph node dissection'], videoId: 'TsrZgK7BbR4', title: 'Neck dissection — what to expect (MD Anderson)' },
+  { keywords: ['neck dissection levels','lymph node levels','neck levels'], videoId: 'kYADy44A2Vc', title: 'Radical neck dissection — indications & technique' },
+  { keywords: ['salivary gland','parotid','submandibular gland','sialadenitis','sialolithiasis','sialolith'], videoId: '-WzttMhRyho', title: 'Sialendoscopy vs salivary gland removal' },
+  { keywords: ['sialendoscopy','salivary duct','salivary stone','sialoendoscopy'], videoId: '-WzttMhRyho', title: 'Sialendoscopy — minimally invasive salivary procedure' },
+  { keywords: ['tumour resection','tumor resection','cyst enucleation','odontogenic keratocyst','okc','ameloblastoma','oral lesion'], videoId: 'TXJ--eG7F70', title: 'Jaw tumour resection & microvascular reconstruction' },
+  // ── Endodontic surgery ──
+  { keywords: ['apicectomy','apicoectomy','endodontic surgery','root end surgery','root tip resection'], videoId: 'nyGM1_QOUN0', title: 'Apicectomy — step-by-step endodontic microsurgery' },
+  { keywords: ['endodontic surgery','endodontic microsurgery','retrograde filling'], videoId: 'B2zzXiXQbU0', title: 'Endodontic surgery — AAE overview' },
+  // ── Preprosthetic surgery ──
+  { keywords: ['alveoloplasty','ridge smoothing','preprosthetic','alveoloplasty','ridge preparation'], videoId: 'yyjMe8etu3Y', title: 'Alveolar ridge management — preprosthetic principles' },
+  { keywords: ['tori removal','palatal torus','mandibular torus','torus palatinus','torus mandibularis'], videoId: 'be-8EcaUld4', title: 'Tori removal — indications, challenges & patient factors' },
+  { keywords: ['vestibuloplasty','ridge augmentation','soft tissue graft','connective tissue graft'], videoId: 'V1oEmrFAWOQ', title: 'Soft tissue ridge augmentation — vestibuloplasty & grafting' },
+  // ── Dentoalveolar ──
+  { keywords: ['dentoalveolar','alveolar fracture','tooth avulsion','avulsed tooth','alveolar bone graft'], videoId: 'RcxMK7Qo5Gw', title: 'Alveolar fracture — dentoalveolar trauma principles' },
+  { keywords: ['tooth extraction','atraumatic extraction','simple extraction','forceps extraction'], videoId: 'RDJy6i1BHjQ', title: 'Low-traumatic extraction — ridge preservation technique' },
+  // ── Reconstructive ──
+  { keywords: ['free flap','microvascular','fibula flap','reconstruction','distraction osteogenesis'], videoId: 'TXJ--eG7F70', title: 'Jaw in a Day — fibula free flap & implant reconstruction' },
+  { keywords: ['bone graft','iliac crest graft','calvarial graft','block graft'], videoId: 'TXJ--eG7F70', title: 'Head & neck reconstruction — virtual surgical planning' },
+  // ── General trauma ──
+  { keywords: ['facial trauma','panfacial fracture','mandibular fixation','maxillomandibular fixation','mmf'], videoId: 'RcxMK7Qo5Gw', title: 'Jaw fracture surgical treatment — MMF & ORIF animation' },
+  // ── Local anaesthesia ──
   { keywords: ['local anaesthesia','local anesthesia','nerve block','inferior alveolar nerve','lingual nerve','mental nerve'], videoId: 'E1t19b_AqWU', title: 'Mandibular nerve anatomy & anaesthesia' },
-  // Biopsy
-  { keywords: ['biopsy','incisional biopsy','excisional biopsy','oral lesion'], videoId: 'PeAUQweKCHg', title: 'Oral biopsy technique' },
+  // ── Biopsy ──
+  { keywords: ['biopsy','incisional biopsy','excisional biopsy','oral biopsy'], videoId: 'PeAUQweKCHg', title: 'Oral biopsy technique' },
+  // ── Cosmetic ──
+  { keywords: ['rhinoplasty','septoplasty','nose surgery','nasal reconstruction'], videoId: '6fa1oEDiCEQ', title: 'Facial surgical approaches — nose, orbit & midface' },
 ];
 
 function matchVideos(procedures, topic){
