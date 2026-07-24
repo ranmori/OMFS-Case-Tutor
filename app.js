@@ -841,6 +841,69 @@ if(!DATA.settings.apiKey && DATA.settings.provider !== 'pollinations'){
 }
 refreshBadges();
 
+/* ============================================================
+   PDF / Print export — builds a clean printable reference
+   from the current DATA state, then triggers window.print()
+   ============================================================ */
+function preparePrintView(){
+  const el = document.getElementById('printableReference');
+  const date = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  const caseCount = DATA.cases.length;
+
+  let html = `<h1>OMFS Case Tutor — Personal Reference</h1>`;
+  html += `<p class="print-sub">Generated ${date} · ${caseCount} case${caseCount===1?'':'s'} worked</p>`;
+
+  /* --- Drug Reference --- */
+  html += `<h2>Drug Reference</h2>`;
+  if(DATA.drugCards.length === 0){
+    html += `<p class="empty-note">No drug entries yet.</p>`;
+  } else {
+    const groups = {};
+    DATA.drugCards.forEach(c => {
+      const key = c.trigger || 'General';
+      if(!groups[key]) groups[key] = [];
+      groups[key].push(c);
+    });
+    Object.keys(groups).sort().forEach(trigger => {
+      html += `<div class="drug-group">`;
+      html += `<div class="drug-group-title">${escapeHTML(trigger)}</div>`;
+      groups[trigger].forEach(c => {
+        html += `<div class="drug-entry">`;
+        html += `<h4>${escapeHTML(c.name)}</h4>`;
+        html += `<p class="trigger">${escapeHTML(c.trigger || '')}</p>`;
+        html += `<p class="info">${escapeHTML(c.info || '')}</p>`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+    });
+  }
+
+  /* --- Procedure Log --- */
+  html += `<h2>Procedure Log</h2>`;
+  if(DATA.procedureLog.length === 0){
+    html += `<p class="empty-note">No procedures logged yet.</p>`;
+  } else {
+    html += `<table class="proc-table">`;
+    html += `<thead><tr><th>Date</th><th>Procedure</th><th>Topic</th><th>Notes</th></tr></thead>`;
+    html += `<tbody>`;
+    DATA.procedureLog.forEach(p => {
+      html += `<tr><td>${p.date}</td><td>${escapeHTML(p.procedure)}</td><td>${escapeHTML(p.topic)}</td><td>${escapeHTML(p.notes||'')}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  html += `<div class="print-footer">OMFS Case Tutor · chart-based self-study · fictional cases only</div>`;
+
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+  preparePrintView();
+  window.print();
+  setTimeout(()=>{ document.getElementById('printableReference').style.display = 'none'; }, 500);
+});
+
 // register service worker for offline app shell
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{

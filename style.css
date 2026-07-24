@@ -288,3 +288,65 @@ button{font-family:inherit;}
   .stamp{animation:none;}
   *{transition:none !important;}
 }
+
+/* ============ print / PDF export ============ */
+@media print{
+  body *{visibility:hidden;}
+  #printableReference,#printableReference *{visibility:visible;}
+  #printableReference{
+    position:absolute;top:0;left:0;width:100%;
+    padding:40px 50px;
+    background:#fff;color:#1a1408;
+    font-family:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
+  }
+  .no-print{display:none !important;}
+  #printableReference h1{
+    font-size:1.6rem;margin:0 0 4px;letter-spacing:.3px;
+    border-bottom:2px solid #26221b;padding-bottom:10px;
+  }
+  #printableReference .print-sub{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.72rem;color:#524b3d;margin:0 0 28px;letter-spacing:.04em;
+  }
+  #printableReference h2{
+    font-size:1.15rem;margin:28px 0 12px;
+    border-bottom:1px solid #c9c2ae;padding-bottom:6px;
+    letter-spacing:.02em;
+  }
+  #printableReference .drug-group{margin-bottom:18px;}
+  #printableReference .drug-group-title{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;
+    color:#524b3d;margin:0 0 8px;
+  }
+  #printableReference .drug-entry{
+    margin-bottom:10px;padding-left:12px;border-left:3px solid #d98e32;
+  }
+  #printableReference .drug-entry h4{
+    margin:0 0 2px;font-size:1rem;
+  }
+  #printableReference .drug-entry .trigger{
+    font-style:italic;font-size:.85rem;color:#524b3d;margin:0 0 3px;
+  }
+  #printableReference .drug-entry .info{
+    font-size:.88rem;line-height:1.5;margin:0;
+  }
+  #printableReference .proc-table{
+    width:100%;border-collapse:collapse;font-size:.85rem;
+  }
+  #printableReference .proc-table th{
+    text-align:left;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+    color:#524b3d;border-bottom:1px solid #c9c2ae;padding:6px 8px;
+  }
+  #printableReference .proc-table td{
+    padding:6px 8px;border-bottom:1px solid #e8e1d0;vertical-align:top;
+  }
+  #printableReference .empty-note{
+    font-style:italic;color:#524b3d;font-size:.88rem;
+  }
+  #printableReference .print-footer{
+    margin-top:32px;padding-top:10px;border-top:1px solid #c9c2ae;
+    font-size:.7rem;color:#524b3d;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+}

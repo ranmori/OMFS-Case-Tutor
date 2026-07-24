@@ -26,7 +26,10 @@
         <p class="brand-sub">chart-based self-study &mdash; fictional cases only</p>
       </div>
     </div>
-    <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Open settings">&#9881;</button>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="downloadPdfBtn" class="icon-btn no-print" title="Download reference PDF" aria-label="Download reference PDF" style="width:auto;padding:0 12px;border-radius:16px;font-size:.76rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.02em;">&#8681; Reference</button>
+      <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Open settings">&#9881;</button>
+    </div>
   </div>
 
   <nav class="chart-tabs" role="tablist" aria-label="Sections">
@@ -175,6 +178,8 @@
 </div>
 
 <div class="toast" id="toast" hidden></div>
+
+<div id="printableReference" style="display:none;"></div>
 
 <script src="app.js"></script>
 </body>
