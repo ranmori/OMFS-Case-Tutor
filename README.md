@@ -15,6 +15,7 @@ A free, browser-based oral & maxillofacial surgery (OMFS) case-based learning to
 - **Embedded procedure videos** — curated YouTube teaching videos matched to each case's procedures
 - **Clinical illustrations** — AI-generated radiographs and clinical images via Pollinations image API
 - **Speech synthesis** — have the attending read the diagnosis and management aloud
+- **Downloadable reference PDF** — one-click export of all drug cards and procedure logs as a clean, printable PDF via the browser's native print dialog
 - **PWA** — installable on desktop and mobile, works offline after first load
 
 ## Quick start
@@ -82,6 +83,7 @@ npx serve .
 7. Procedure entries are logged automatically
 8. Progress charts update with your rating history
 9. Future cases are biased toward your weakest topics
+10. Click **↓ Reference** to export everything as a printable PDF — drug cards grouped by trigger, full procedure log, date-stamped
 
 All data is stored in your browser's localStorage — nothing is sent to any server except the AI provider you choose.
 
